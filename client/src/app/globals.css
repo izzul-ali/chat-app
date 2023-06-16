@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  background-color: #dbeafe;
+}
+
+@layer base {
+  input,
+  button {
+    @apply outline-none;
+  }
+}
