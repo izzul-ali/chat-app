@@ -1,3 +1,14 @@
-node_modules
-build
-.env
+# dependecies
+/node_modules
+package-lock.json
+
+# build dir
+/build
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# environment
+.env*
