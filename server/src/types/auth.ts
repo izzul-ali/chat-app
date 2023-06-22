@@ -12,6 +12,7 @@ export interface AuthRegister {
   email: string;
   password: string;
   provider: string;
+  image?: string;
 }
 
 export interface AuthLogin {
