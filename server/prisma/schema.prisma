@@ -16,7 +16,7 @@ model User {
   email    String @unique @db.VarChar(100)
   password String @db.Text
   provider String @db.VarChar(20) @default("credentials")
-  image    String @db.VarChar(100) @default("")
+  image    String @db.Text @default("")
 }
 
 model Verification {
