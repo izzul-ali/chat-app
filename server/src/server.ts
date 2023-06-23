@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import auth from './routes/auth-route';
+import bodyParser from 'body-parser';
 
 const client = process.env.CLIENT_ORIGIN;
 const port = process.env.PORT;
@@ -15,7 +16,8 @@ app.use(
     methods: 'GET,PUT,POST,DELETE',
   })
 );
-app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 
 app.use('/api/auth', auth);
 
