@@ -1,11 +1,25 @@
 import { render, screen } from '@testing-library/react';
-import ErrorModal from '~/components/ErrorModal';
+import { FC, useEffect } from 'react';
+import ErrorModalProvider, { useErrorModal } from '~/components/ErrorModal';
 
-it('error modal test', () => {
-  render(<ErrorModal message="message" clear={() => ''} />);
+const ErrorComponent: FC = () => {
+  const { setError } = useErrorModal();
+  useEffect(() => {
+    setError('Error Test');
+  }, []);
+  return <></>;
+};
 
-  const closeBtn = screen.getByRole('button', { name: /X/ });
+it('error modal test', async () => {
+  render(
+    <ErrorModalProvider>
+      <ErrorComponent />
+    </ErrorModalProvider>
+  );
 
+  const errorMesg = await screen.findByText('Error: Error Test');
+  const closeBtn = await screen.findByRole('button', { name: /X/ });
+
+  expect(errorMesg).toBeInTheDocument();
   expect(closeBtn).toBeInTheDocument();
-  expect(screen.getByText(/Error: message/)).toBeInTheDocument();
 });

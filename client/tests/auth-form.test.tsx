@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import ErrorModalProvider from '~/components/ErrorModal';
 import AuthForm from '~/components/form/Auth';
 
 // by default jest not support to render package next/navigation
@@ -16,7 +17,11 @@ jest.mock('next/navigation', () => ({
 
 describe('authentication form', () => {
   beforeEach(() => {
-    render(<AuthForm />);
+    render(
+      <ErrorModalProvider>
+        <AuthForm />
+      </ErrorModalProvider>
+    );
   });
 
   it('should render available button', () => {
