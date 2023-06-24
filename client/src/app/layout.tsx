@@ -1,6 +1,6 @@
 import { Red_Hat_Text } from 'next/font/google';
 import { Metadata } from 'next';
-import SessionAuthProvider, { RequiredAuth } from '~/components/Session';
+import SessionAuthProvider from '~/components/Session';
 import ErrorModalProvider from '~/components/ErrorModal';
 import './globals.css';
 
@@ -17,11 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={red_hat_text.variable}>
         <ErrorModalProvider>
-          <SessionAuthProvider>
-            <RequiredAuth isRequiredAuth={false} isRequiredUnAuth={true}>
-              {children}
-            </RequiredAuth>
-          </SessionAuthProvider>
+          <SessionAuthProvider>{children}</SessionAuthProvider>
         </ErrorModalProvider>
       </body>
     </html>

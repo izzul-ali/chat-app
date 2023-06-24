@@ -2,10 +2,10 @@ import { getServerSession } from 'next-auth';
 import { RedirectType } from 'next/dist/client/components/redirect';
 import { redirect } from 'next/navigation';
 
-export default async function ChatLayout({ children }: { children: React.ReactNode }) {
+export default async function VerifyLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession();
-  if (!session?.user) {
-    redirect('/', RedirectType.replace);
+  if (session?.user) {
+    redirect('/chat', RedirectType.replace);
   }
 
   return <>{children}</>;

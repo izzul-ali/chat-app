@@ -1,12 +1,10 @@
 import { Router } from 'express';
-import { login, register } from '../controller/auth-controller';
+import { login } from '../controller/auth-controller';
 import { verifyRegister } from '../controller/verify';
 
 const auth = Router();
 
-auth.post('/register', register);
 auth.post('/login', login);
-auth.get('/verification/token/:verify', verifyRegister);
-// auth.get('/verification/code/:verify', login);
+auth.get('/verification/:email/:token', verifyRegister);
 
 export default auth;

@@ -14,7 +14,6 @@ model User {
   id       String @id @default(cuid())
   name     String @unique @db.VarChar(100)
   email    String @unique @db.VarChar(100)
-  password String @db.Text
   provider String @db.VarChar(20) @default("credentials")
   image    String @db.Text @default("")
 }
@@ -23,7 +22,6 @@ model Verification {
   id         Int      @id @default(autoincrement())
   email      String   @db.VarChar(100)
   token      String   @db.Text @unique
-  password   String   @db.Text
-  name       String   @db.VarChar(50)
+  isRegister Boolean @db.Boolean @default(false)
   created_at DateTime @default(now())
 }

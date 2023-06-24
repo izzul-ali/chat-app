@@ -1,128 +1,98 @@
 import { Request, Response } from 'express';
-import { UserResponse } from '../types/user';
-import { AuthLogin, AuthRegister } from '../types/auth';
+import { User, AuthLogin } from '../types/user';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import bcr from 'bcrypt';
 import response from '../utils/response-api';
 import prisma from '../lib/prisma';
 import sendRegisterEmailVerification from '../service/verification';
 
-export async function register(req: Request, res: Response) {
-  const payload: AuthRegister = req.body;
+export async function login(req: Request, res: Response) {
+  const payload: AuthLogin = req.body;
 
-  if (!payload.name || !payload.email || !payload.provider || !payload.password) {
-    return response<null>(res, 400, 'Incomplete register payload', null);
+  if (!payload.provider) {
+    return response<null>(res, 400, 'Provider is required', null);
+  }
+
+  if (payload.provider !== 'credentials' && !payload.email) {
+    return response<null>(res, 400, 'Email is required', null);
   }
 
   async function findUser() {
-    return await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: {
         email: payload.email,
       },
     });
+
+    return user;
   }
 
-  try {
-    if (payload.provider === 'google') {
-      const user = await findUser();
+  let regex = new RegExp(
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  );
 
-      if (user) {
-        return response<UserResponse>(res, 200, '', {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          image: user.image,
+  try {
+    if (payload.provider === 'email') {
+      if (!regex.test(payload.email)) return response<null>(res, 400, 'Please enter a valid email address', null);
+
+      const user = await findUser();
+      // the second parameter to indicate if the user is already registered
+      await sendRegisterEmailVerification(payload.email, user !== null);
+
+      return response<string>(res, 200, '', 'Verification email has been sent');
+    }
+
+    if (payload.provider === 'google') {
+      if (!regex.test(payload.email)) return response<null>(res, 400, 'Please enter a valid email address', null);
+
+      let user: User | null;
+      user = await findUser();
+
+      if (!user) {
+        user = await prisma.user.create({
+          data: {
+            email: payload.email,
+            name: payload.name || payload.email,
+            provider: payload.provider,
+            image: payload.image || '',
+          },
         });
       }
 
-      // NOTE: redirect users to set password when register with google
-      payload.password = await bcr.hash(String(new Date().getTime()), 16);
-
-      const newUser = await prisma.user.create({
-        data: payload,
-      });
-
-      return response<UserResponse>(res, 200, '', {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
-        image: newUser.image,
-      });
+      return response<User>(res, 200, '', user);
     }
 
-    if (payload.password.length < 7) {
-      return response<null>(res, 400, 'Password must be greater than 7', null);
+    if (!payload.guestId) {
+      return response<null>(res, 400, 'Guest Id is required', null);
     }
 
-    const user = await findUser();
-    if (user) {
-      return response<null>(res, 400, 'User already registered', null);
+    // search guest id
+    const guest = await prisma.user.findUnique({
+      where: {
+        id: payload.guestId,
+      },
+    });
+
+    if (!guest) {
+      return response<null>(res, 404, `Guest with id ${payload.guestId} not found`, null);
     }
 
-    // TODO: create custom error
-    await sendRegisterEmailVerification(payload);
-
-    return response<string>(res, 200, '', 'Wait for email verification');
+    return response<User>(res, 200, '', guest);
   } catch (error) {
     // prisma error documentation
     // https://www.prisma.io/docs/reference/api-reference/error-reference#prisma-client-query-engine
 
     if (error instanceof PrismaClientKnownRequestError) {
+      console.log(error.code);
       if (error.code === 'P2002') {
-        return response<null>(res, 500, 'Error same token on db', null);
+        return response<null>(res, 400, 'Email already exist', null);
       }
       return response<null>(res, 500, 'Failed to save verification token, code: ' + error.code, null);
     }
 
-    console.log(error);
-    return response<null>(res, 500, 'Internal server error', null);
-  }
-}
+    const err = <Error>error;
+    // console.log(err.stack ? err.stack : err.message);
+    console.log(err.message);
 
-export async function login(req: Request, res: Response) {
-  const payload: AuthLogin = req.body;
-
-  if (!payload.nameOrEmail || !payload.password) {
-    return response<null>(res, 400, 'Incomplete login payload', null);
-  }
-
-  try {
-    const errorMsg = 'User not found or invalid password';
-
-    const user = await prisma.user.findFirst({
-      where: {
-        OR: [
-          {
-            name: payload.nameOrEmail,
-          },
-          {
-            email: payload.nameOrEmail,
-          },
-        ],
-      },
-    });
-
-    // when user not found
-    if (!user) {
-      return response<null>(res, 404, errorMsg, null);
-    }
-
-    // compare encript password with payload password
-    const match = await bcr.compare(payload.password, user.password);
-    if (!match) {
-      return response<null>(res, 404, errorMsg, null);
-    }
-
-    // TODO: send code verification to user email
-
-    return response<UserResponse>(res, 200, '', {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      image: user.image,
-    });
-  } catch (error) {
-    console.log(error);
-    return response<null>(res, 500, 'Internal server error', null);
+    return response<null>(res, 500, err.message, null);
   }
 }

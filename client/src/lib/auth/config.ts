@@ -1,9 +1,8 @@
 import { NextAuthOptions } from 'next-auth';
 import { Credential } from '../auth/providers';
-import { AuthRegister } from '~/types/auth';
+import { AuthLogin } from '~/types/auth';
 import { AxiosError } from 'axios';
 import GoogleProvider from 'next-auth/providers/google';
-import credentialsCallback from '../auth/callback';
 import axiosInstance from '~/lib/axios';
 
 export const authOptions: NextAuthOptions = {
@@ -26,22 +25,15 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ account, user }) {
-      // user signin with email credentials
-      if (account?.provider === 'credentials' && !user.isAuth) {
-        return await credentialsCallback(user);
-      }
-
       // user signin with google
       if (account?.provider === 'google') {
         try {
-          await axiosInstance.post('/auth/register', <AuthRegister>{
+          await axiosInstance.post('/auth/login', <AuthLogin>{
             name: user.name,
             email: user.email,
-            password: user.email,
             provider: account.provider,
             image: user.image,
           });
-
           return true;
         } catch (error) {
           if (error instanceof AxiosError) {

@@ -1,27 +1,23 @@
-import { AuthRegister } from '../types/auth';
 import { createTransport } from 'nodemailer';
 import prisma from '../lib/prisma';
-import bcr from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-export default async function sendRegisterEmailVerification(payload: AuthRegister) {
-  const token = generateAccessToken(payload.email);
-  const hashPassword = await bcr.hash(payload.password, 16);
+export default async function sendRegisterEmailVerification(userEmail: string, isRegistered: boolean) {
+  const token = generateAccessToken(userEmail);
 
   try {
     await prisma.verification.create({
       data: {
-        email: payload.email,
-        name: payload.name,
-        password: hashPassword,
+        email: userEmail,
         token: token,
+        isRegister: isRegistered,
       },
     });
   } catch (error) {
     throw error;
   }
 
-  const link = `${process.env.CLIENT_ORIGIN}/auth/verification/${token}`;
+  const link = `${process.env.CLIENT_ORIGIN}/auth/verify/${userEmail}/${token}`;
 
   const getTransport = createTransport({
     name: 'gmail',
@@ -32,7 +28,7 @@ export default async function sendRegisterEmailVerification(payload: AuthRegiste
     },
   });
 
-  const requestEmail = createMailOptions(payload.email, link);
+  const requestEmail = createMailOptions(userEmail, link);
   getTransport.sendMail(
     {
       from: requestEmail.from,
@@ -45,7 +41,7 @@ export default async function sendRegisterEmailVerification(payload: AuthRegiste
       if (err) {
         console.log(err.message);
 
-        await prisma.verification.deleteMany({ where: { email: payload.email } });
+        await prisma.verification.deleteMany({ where: { email: userEmail } });
         throw err;
       }
 
