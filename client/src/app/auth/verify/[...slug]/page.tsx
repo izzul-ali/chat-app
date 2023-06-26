@@ -5,10 +5,6 @@ import { notFound, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function VerifyPage({ params }: { params: { slug: string[] } }) {
-  if (params.slug.length !== 2) {
-    return notFound();
-  }
-
   const route = useRouter();
 
   async function handleVerification() {
@@ -26,8 +22,13 @@ export default function VerifyPage({ params }: { params: { slug: string[] } }) {
   }
 
   useEffect(() => {
-    handleVerification();
-  }, []);
+    if (params.slug.length !== 2) {
+      return notFound();
+    }
 
+    handleVerification();
+  }, [params.slug]);
+
+  // should show error response
   return <div>Loading</div>;
 }
