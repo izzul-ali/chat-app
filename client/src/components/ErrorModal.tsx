@@ -11,7 +11,7 @@ function ErrorModal({ message, clear }: { message: string; clear: Dispatch<SetSt
       animate={{ top: 15 }}
       exit={{ top: -5, opacity: 0 }}
       transition={{ duration: 0.3, type: 'spring' }}
-      className="absolute flex justify-center sm:justify-end sm:pl-10 right-0 left-0 bg-transparent z-10"
+      className="absolute flex justify-center sm:justify-end sm:pr-5 w-full bg-transparent z-10"
     >
       <div className="relative w-[90%] sm:w-1/2 lg:w-1/3 xl:w-1/4 py-3 px-6 rounded-md shadow-md shadow-gray-300 bg-white hover:bg-gray-100 text-sm font-primary font-semibold text-red-500">
         <p className="text-center">Error: {message}</p>
@@ -38,7 +38,7 @@ function ErrorModalProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const timeout = setTimeout(() => {
       setError('');
-    }, 3000);
+    }, 5000);
 
     return () => clearTimeout(timeout);
   }, [error]);
