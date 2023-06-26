@@ -114,161 +114,157 @@ export default function LoginAuthentication() {
   }
 
   return (
-    <>
-      <AnimatePresence key="animate-root">
-        {!showModalVerification ? (
-          <AnimatePresence key="animate-login" initial={true}>
-            <motion.div
-              variants={variant}
-              initial="initial"
-              animate="animate"
-              transition={{ duration: 1, type: 'spring' }}
-              className="flex flex-col items-center w-72"
-            >
-              <motion.div
-                variants={variant}
-                initial="initial"
-                animate="animate"
-                transition={{ duration: 1.3, type: 'spring', delay: 0.1 }}
-                className="w-24 h-24 rounded-full bg-blue-400 mb-3"
-              ></motion.div>
-              <motion.h1
-                variants={variant}
-                initial="initial"
-                animate="animate"
-                transition={{ duration: 1.3, type: 'spring', delay: 0.122 }}
-                className="text-xl font-semibold text-gray-700"
-              >
-                Login to ChatApp
-              </motion.h1>
-
-              <motion.button
-                aria-label="signin-google"
-                onClick={() => signIn('google', { callbackUrl: '/chat' })}
-                variants={variant}
-                initial="initial"
-                animate="animate"
-                transition={{ duration: 1.3, type: 'spring', delay: 0.133 }}
-                className="w-full mt-5 flex text-gray-100 items-center justify-center gap-x-4 py-3 rounded bg-blue-600 hover:bg-blue-600/90 text-sm"
-              >
-                <FcGoogle /> Continue with Google
-              </motion.button>
-
-              <motion.div layout className="w-full h-fit font-semibold text-gray-500">
-                <motion.div
-                  layout
-                  variants={variant}
-                  initial="initial"
-                  animate="animate"
-                  transition={{ duration: 1.3, type: 'spring', delay: 0.155 }}
-                  className="mt-5"
-                >
-                  {showInput?.email && (
-                    <motion.div
-                      layout
-                      variants={inputVariant}
-                      initial="initial"
-                      animate="animate"
-                      exit="exit"
-                      transition={{ duration: 0.3, stiffness: 100, type: 'spring', delay: 0.1 }}
-                    >
-                      <input
-                        autoFocus={true}
-                        ref={email}
-                        type="email"
-                        name="email"
-                        placeholder="Enter your email address"
-                        className="w-full block bg-blue-50 p-3 mb-1 text-sm placeholder:font-light rounded border border-blue-400"
-                      />
-                    </motion.div>
-                  )}
-                  {inputError.email && <ErrorInputMessage message={inputError.email} />}
-                  <motion.button
-                    aria-label="signin-email"
-                    layout
-                    type="button"
-                    disabled={loading}
-                    onClick={() => {
-                      showInput?.email ? handleSubmit('email') : handleShowInputEmail();
-                    }}
-                    className="w-full mt-1 flex items-center justify-center py-3 rounded bg-white border border-gray-200 text-sm"
-                  >
-                    {loading && showInput?.email ? (
-                      <CgSpinner className="animate-spin text-blue-500" />
-                    ) : (
-                      'Continue with Email'
-                    )}
-                  </motion.button>
-                </motion.div>
-
-                <motion.div
-                  layout
-                  variants={variant}
-                  initial="initial"
-                  animate="animate"
-                  transition={{ duration: 1.3, type: 'spring', delay: 0.166 }}
-                  className="mt-5"
-                >
-                  {showInput?.guest && (
-                    <motion.div
-                      layout
-                      variants={inputVariant}
-                      initial="initial"
-                      animate="animate"
-                      exit="exit"
-                      transition={{ duration: 0.3, stiffness: 100, type: 'spring', delay: 0.1 }}
-                    >
-                      <input
-                        autoFocus={true}
-                        ref={guestId}
-                        type="text"
-                        name="guest"
-                        placeholder="Guest ID"
-                        className="w-full block bg-blue-50 p-3 mb-1 text-sm placeholder:font-light rounded border border-blue-400"
-                      />
-                    </motion.div>
-                  )}
-                  {inputError.guest && <ErrorInputMessage message={inputError.guest} />}
-                  <motion.button
-                    aria-label="signin-guest"
-                    layout
-                    type="button"
-                    disabled={loading}
-                    onClick={() => {
-                      showInput?.guest ? handleSubmit('guest') : handleShowInputGuest();
-                    }}
-                    className="w-full mt-1 flex items-center justify-center py-3 rounded bg-white border border-gray-200 text-sm"
-                  >
-                    {loading && showInput?.guest ? <CgSpinner className="animate-spin text-blue-500" /> : 'Guest Login'}
-                  </motion.button>
-                </motion.div>
-              </motion.div>
-            </motion.div>
-          </AnimatePresence>
-        ) : (
+    <AnimatePresence key="animate-root">
+      {!showModalVerification ? (
+        <motion.div
+          variants={variant}
+          initial="initial"
+          animate="animate"
+          transition={{ duration: 1, type: 'spring' }}
+          className="flex flex-col items-center w-72"
+        >
           <motion.div
             variants={variant}
             initial="initial"
             animate="animate"
-            transition={{ duration: 0.5, type: 'spring', delay: 0.1 }}
-            className="w-[20rem] p-5 text-sm rounded text-center text-gray-700"
+            transition={{ duration: 1.3, type: 'spring', delay: 0.1 }}
+            className="w-24 h-24 rounded-full bg-blue-400 mb-3"
+          ></motion.div>
+          <motion.h1
+            variants={variant}
+            initial="initial"
+            animate="animate"
+            transition={{ duration: 1.3, type: 'spring', delay: 0.122 }}
+            className="text-xl font-semibold text-gray-700"
           >
-            <div className="w-24 h-24 rounded-full bg-blue-400 mb-3 mx-auto"></div>
-            <h1 className="mb-4 text-2xl font-semibold text-gray-800">Check Your Email</h1>
-            <p className="">
-              We has been sent email verification to <b>{email.current?.value}</b>, please check your inbox to continue.
-            </p>
-            <button
-              aria-label="back-login"
-              onClick={() => setShowModalVerification(false)}
-              className="mt-6 mx-auto px-3 py-1 rounded"
+            Login to ChatApp
+          </motion.h1>
+
+          <motion.button
+            aria-label="signin-google"
+            onClick={() => signIn('google', { callbackUrl: '/chat' })}
+            variants={variant}
+            initial="initial"
+            animate="animate"
+            transition={{ duration: 1.3, type: 'spring', delay: 0.133 }}
+            className="w-full mt-5 flex text-gray-100 items-center justify-center gap-x-4 py-3 rounded bg-blue-600 hover:bg-blue-600/90 text-sm"
+          >
+            <FcGoogle /> Continue with Google
+          </motion.button>
+
+          <motion.div layout className="w-full h-fit font-semibold text-gray-500">
+            <motion.div
+              layout
+              variants={variant}
+              initial="initial"
+              animate="animate"
+              transition={{ duration: 1.3, type: 'spring', delay: 0.155 }}
+              className="mt-5"
             >
-              back to login
-            </button>
+              {showInput?.email && (
+                <motion.div
+                  layout
+                  variants={inputVariant}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  transition={{ duration: 0.3, stiffness: 100, type: 'spring', delay: 0.1 }}
+                >
+                  <input
+                    autoFocus={true}
+                    ref={email}
+                    type="email"
+                    name="email"
+                    placeholder="Enter your email address"
+                    className="w-full block bg-blue-50 p-3 mb-1 text-sm placeholder:font-light rounded border border-blue-400"
+                  />
+                </motion.div>
+              )}
+              {inputError.email && <ErrorInputMessage message={inputError.email} />}
+              <motion.button
+                aria-label="signin-email"
+                layout
+                type="button"
+                disabled={loading}
+                onClick={() => {
+                  showInput?.email ? handleSubmit('email') : handleShowInputEmail();
+                }}
+                className="w-full mt-1 flex items-center justify-center py-3 rounded bg-white border border-gray-200 text-sm"
+              >
+                {loading && showInput?.email ? (
+                  <CgSpinner className="animate-spin text-blue-500" />
+                ) : (
+                  'Continue with Email'
+                )}
+              </motion.button>
+            </motion.div>
+
+            <motion.div
+              layout
+              variants={variant}
+              initial="initial"
+              animate="animate"
+              transition={{ duration: 1.3, type: 'spring', delay: 0.166 }}
+              className="mt-5"
+            >
+              {showInput?.guest && (
+                <motion.div
+                  layout
+                  variants={inputVariant}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  transition={{ duration: 0.3, stiffness: 100, type: 'spring', delay: 0.1 }}
+                >
+                  <input
+                    autoFocus={true}
+                    ref={guestId}
+                    type="text"
+                    name="guest"
+                    placeholder="Guest ID"
+                    className="w-full block bg-blue-50 p-3 mb-1 text-sm placeholder:font-light rounded border border-blue-400"
+                  />
+                </motion.div>
+              )}
+              {inputError.guest && <ErrorInputMessage message={inputError.guest} />}
+              <motion.button
+                aria-label="signin-guest"
+                layout
+                type="button"
+                disabled={loading}
+                onClick={() => {
+                  showInput?.guest ? handleSubmit('guest') : handleShowInputGuest();
+                }}
+                className="w-full mt-1 flex items-center justify-center py-3 rounded bg-white border border-gray-200 text-sm"
+              >
+                {loading && showInput?.guest ? <CgSpinner className="animate-spin text-blue-500" /> : 'Guest Login'}
+              </motion.button>
+            </motion.div>
           </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+        </motion.div>
+      ) : (
+        <motion.div
+          variants={variant}
+          initial="initial"
+          animate="animate"
+          transition={{ duration: 0.5, type: 'spring', delay: 0.1 }}
+          className="w-[20rem] p-5 text-sm rounded text-center text-gray-700"
+        >
+          <div className="w-24 h-24 rounded-full bg-blue-400 mb-3 mx-auto"></div>
+          <h1 className="mb-4 text-2xl font-semibold text-gray-800">Check Your Email</h1>
+          <p className="">
+            We has been sent email verification to <b>{email.current?.value}</b>, please check your inbox to continue.
+          </p>
+          <button
+            aria-label="back-login"
+            onClick={() => setShowModalVerification(false)}
+            className="mt-6 mx-auto px-3 py-1 rounded"
+          >
+            back to login
+          </button>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
