@@ -68,15 +68,15 @@ export default function LoginAuthentication() {
         setInputError({ email: 'Please enter an email address for login' });
         return;
       }
-
       setLoading(true);
+
       const data = new URLSearchParams({
         email: email.current.value,
         provider: 'email',
       });
 
       try {
-        const resp = await axiosInstance.post('/auth/login', data, {
+        await axiosInstance.post('/auth/login', data, {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         });
 
@@ -120,8 +120,8 @@ export default function LoginAuthentication() {
           variants={variant}
           initial="initial"
           animate="animate"
-          transition={{ duration: 1, type: 'spring' }}
-          className="flex flex-col items-center w-72"
+          transition={{ duration: 0.7, type: 'spring', stiffness: 100 }}
+          className="flex flex-col items-center w-72 mt-24"
         >
           <motion.div
             variants={variant}
