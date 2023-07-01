@@ -35,6 +35,7 @@ export async function login(req: Request, res: Response) {
       if (!regex.test(payload.email)) return response<null>(res, 400, 'Please enter a valid email address', null);
 
       const user = await findUser();
+
       // the second parameter to indicate if the user is already registered
       await sendRegisterEmailVerification(payload.email, user !== null);
 
@@ -82,16 +83,15 @@ export async function login(req: Request, res: Response) {
     // https://www.prisma.io/docs/reference/api-reference/error-reference#prisma-client-query-engine
 
     if (error instanceof PrismaClientKnownRequestError) {
-      console.log(error.code);
       if (error.code === 'P2002') {
         return response<null>(res, 400, 'Email already exist', null);
       }
+
       return response<null>(res, 500, 'Failed to save verification token, code: ' + error.code, null);
     }
 
     const err = <Error>error;
-    // console.log(err.stack ? err.stack : err.message);
-    console.log(err.message);
+    console.log(err.stack || err.message);
 
     return response<null>(res, 500, err.message, null);
   }

@@ -7,7 +7,6 @@ import prisma from '../lib/prisma';
 
 export async function verifyRegister(req: Request, res: Response) {
   const { email, token } = req.params;
-  console.log(email, token);
 
   if (!email || !token) {
     return response<null>(res, 400, 'Email and Token is required', null);
@@ -67,16 +66,18 @@ export async function verifyRegister(req: Request, res: Response) {
   } catch (error) {
     // prisma error documentation
     // https://www.prisma.io/docs/reference/api-reference/error-reference#prisma-client-query-engine
+
     if (error instanceof PrismaClientKnownRequestError) {
       return response<null>(res, 400, 'Failed to verification token, code: ' + error.code, null);
     }
 
     if (error instanceof jwt.JsonWebTokenError) {
-      console.log(error.message);
       return response<null>(res, 400, 'Invalid token', null);
     }
 
-    console.log(error);
+    const err = <Error>error;
+    console.log(err.stack || err.message);
+
     return response<null>(res, 500, 'Internal server error', null);
   }
 }
