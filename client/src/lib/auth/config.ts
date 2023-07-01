@@ -1,7 +1,10 @@
 import { NextAuthOptions } from 'next-auth';
+import { cookies } from 'next/headers';
 import { Credential } from '../auth/providers';
 import { AuthLogin } from '~/types/auth';
 import { AxiosError } from 'axios';
+import { User, UserResponse } from '~/types/user';
+import { ResponseApi } from '~/types/api';
 import GoogleProvider from 'next-auth/providers/google';
 import axiosInstance from '~/lib/axios';
 
@@ -28,12 +31,22 @@ export const authOptions: NextAuthOptions = {
       // user signin with google
       if (account?.provider === 'google') {
         try {
-          await axiosInstance.post('/auth/login', <AuthLogin>{
+          const resp = await axiosInstance.post('/auth/login', <AuthLogin>{
             name: user.name,
             email: user.email,
             provider: account.provider,
             image: user.image,
           });
+
+          const data = resp.data as ResponseApi<User>;
+          cookies().set({
+            name: 'msg_id',
+            value: data.data.id,
+            httpOnly: true,
+            sameSite: 'lax',
+            maxAge: 7 * 60 * 60 * 24,
+          });
+
           return true;
         } catch (error) {
           if (error instanceof AxiosError) {
@@ -48,16 +61,25 @@ export const authOptions: NextAuthOptions = {
 
     async jwt({ account, token, user }) {
       if (account?.provider === 'credentials') {
-        token.id = user?.id;
+        token.user = user;
       } else {
         token.id = account?.access_token;
       }
 
       return token;
     },
+    async session({ session, token }) {
+      if (token.user) {
+        session.user = token.user as UserResponse;
+      }
+      session.user.email = token.email;
+
+      return session;
+    },
   },
   pages: {
     signIn: '/',
+    signOut: '/chat',
     error: '/',
   },
   session: {
