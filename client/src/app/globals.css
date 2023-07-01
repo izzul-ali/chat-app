@@ -6,6 +6,15 @@
   background-color: #dbeafe;
 }
 
+::-webkit-scrollbar {
+  width: 5px;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgb(206, 206, 206);
+}
+
 @layer base {
   input,
   button {
