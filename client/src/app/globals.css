@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  background-color: #dbeafe;
-}
-
 ::-webkit-scrollbar {
   width: 5px;
   background-color: transparent;
@@ -19,5 +15,19 @@
   input,
   button {
     @apply outline-none;
+  }
+}
+
+@layer components {
+  html.dark {
+    @apply bg-gray-950;
+  }
+
+  html.dark ::-webkit-scrollbar-thumb {
+    @apply bg-gray-800;
+  }
+
+  html.light {
+    @apply bg-white;
   }
 }
