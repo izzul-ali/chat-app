@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { login } from '../controller/auth-controller';
-import { verifyRegister } from '../controller/verify';
+import { verifyRegister } from '../controller/verify-email-controller';
 
 const auth = Router();
 

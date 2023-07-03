@@ -1,6 +1,6 @@
 import { createTransport } from 'nodemailer';
+import { generateAccessToken } from './token';
 import prisma from '../lib/prisma';
-import jwt from 'jsonwebtoken';
 
 export default async function sendRegisterEmailVerification(userEmail: string, isRegistered: boolean) {
   const token = generateAccessToken(userEmail);
@@ -48,19 +48,6 @@ export default async function sendRegisterEmailVerification(userEmail: string, i
       console.log(info.response);
     }
   );
-}
-
-function generateAccessToken(email: string) {
-  const jwtSecret = process.env.JWT_SECRET;
-
-  if (!jwtSecret) {
-    throw new Error('Failed to get jwt secret key');
-  }
-  const expirationDate = new Date();
-  // NOTE: Change expiration time
-  expirationDate.setMinutes(new Date().getMinutes() + 1);
-
-  return jwt.sign({ email, expirationDate }, jwtSecret, { algorithm: 'HS256' });
 }
 
 function createMailOptions(email: string, link: string) {
