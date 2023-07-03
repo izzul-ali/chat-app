@@ -32,7 +32,7 @@ export async function login(req: Request, res: Response) {
 
   try {
     if (payload.provider === 'email') {
-      if (!regex.test(payload.email)) return response<null>(res, 400, 'Please enter a valid email address', null);
+      if (!regex.test(payload.email)) return response<null>(res, 400, 'Please enter valid email address', null);
 
       const user = await findUser();
 
