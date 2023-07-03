@@ -1,6 +1,7 @@
 import { act, render, screen } from '@testing-library/react';
 import LoginAuthentication from '~/components/Auth';
 import ErrorModalProvider from '~/components/ErrorModal';
+import CurrentUserContextProvider from '~/hooks/useUser';
 
 // by default jest not support to render package next/navigation
 // https://github.com/scottrippey/next-router-mock/issues/67#issuecomment-1561164934
@@ -19,32 +20,29 @@ describe('authentication form', () => {
   beforeEach(() => {
     render(
       <ErrorModalProvider>
-        <LoginAuthentication />
+        <CurrentUserContextProvider>
+          <LoginAuthentication isAuthenticate={false} />
+        </CurrentUserContextProvider>
       </ErrorModalProvider>
     );
   });
 
   it('should render available button', () => {
     const btnSigninGoogle = screen.getByRole('button', { name: 'signin-google' });
+    const inputEmail = screen.getByRole('textbox');
     const btnSigninEmail = screen.getByRole('button', { name: 'signin-email' });
-    const btnSigninGuest = screen.getByRole('button', { name: 'signin-guest' });
 
     expect(btnSigninGoogle).toBeInTheDocument();
+    expect(inputEmail).toHaveAttribute('name', 'email');
     expect(btnSigninEmail).toBeInTheDocument();
-    expect(btnSigninGuest).toBeInTheDocument();
   });
 
   it('should render form input name and password', async () => {
     const btnSigninEmail = screen.getByRole('button', { name: 'signin-email' });
-    const btnSigninGuest = screen.getByRole('button', { name: 'signin-guest' });
 
     // if it interacts with an element that changes state, wrap it inside an act()
     act(() => btnSigninEmail.click());
-    const inputEmail = await screen.findByRole('textbox');
-    expect(inputEmail).toHaveAttribute('name', 'email');
-
-    act(() => btnSigninGuest.click());
-    const inputGuestId = await screen.findByRole('textbox');
-    expect(inputGuestId).toHaveAttribute('name', 'guest');
+    const errorText = await screen.findByText('Please enter an email address for login');
+    expect(errorText).toBeInTheDocument();
   });
 });
