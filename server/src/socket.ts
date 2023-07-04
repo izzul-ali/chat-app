@@ -2,10 +2,14 @@ import { Server, Socket } from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { Message } from './types/message';
 
-type OnlineUser = {
-  socketId: string;
+interface SocketUser {
   userId: string;
-};
+  profile: string;
+}
+
+interface OnlineUser extends SocketUser {
+  socketId: string;
+}
 
 class SocketController {
   private onlineUsers: OnlineUser[] = [];
@@ -37,14 +41,20 @@ class SocketController {
   }
 
   private onOnlineUser() {
-    this.socket?.on('user-online', (userId: string) => {
-      if (this.onlineUsers.some((u) => u.userId === userId)) return;
-      this.onlineUsers.push({ userId: userId, socketId: this.socket!.id });
+    this.socket?.on('user-online', (user: SocketUser) => {
+      if (this.onlineUsers.some((u) => u.userId === user.userId)) return;
+      this.onlineUsers.push({ userId: user.userId, profile: user.profile, socketId: this.socket!.id });
 
       // send to all users
       this.io.emit(
         'online-users',
-        this.onlineUsers.map((u) => u.userId)
+        this.onlineUsers.map(
+          (u) =>
+            <SocketUser>{
+              userId: u.userId,
+              profile: u.profile,
+            }
+        )
       );
     });
   }
