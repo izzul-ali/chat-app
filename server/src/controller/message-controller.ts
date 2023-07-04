@@ -64,12 +64,6 @@ export async function getMessageId(req: Request, res: Response) {
       },
     });
 
-    // TODO: remove on production
-    function sleep() {
-      return new Promise((resolve) => setTimeout(() => resolve('send'), 2000));
-    }
-    await sleep();
-
     return response<Message[]>(res, 200, '', result);
   } catch (error) {
     if (error instanceof PrismaClientKnownRequestError) {
