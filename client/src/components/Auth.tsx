@@ -11,6 +11,7 @@ import { AxiosError } from 'axios';
 import { handleGuestLogin } from '~/lib/auth/signin';
 import { useCurrentUser } from '~/hooks/useUser';
 import axiosInstance from '~/lib/axios';
+import Icon from './Icon';
 
 const variant: Variants = {
   initial: { y: -20, opacity: 0 },
@@ -120,8 +121,9 @@ export default function LoginAuthentication({ isAuthenticate }: { isAuthenticate
             initial="initial"
             animate="animate"
             transition={{ type: 'spring', delay: 0.1 }}
-            className="w-24 h-24 rounded-full bg-blue-400 mb-3"
-          ></motion.div>
+          >
+            <Icon width="150px" height="150px" />
+          </motion.div>
           <motion.h1
             key="title"
             variants={variant}
@@ -130,7 +132,7 @@ export default function LoginAuthentication({ isAuthenticate }: { isAuthenticate
             transition={{ type: 'spring', delay: 0.122 }}
             className="text-xl font-semibold text-gray-700 dark:text-gray-300"
           >
-            Login to ChatApp
+            Signin to ChatApp
           </motion.h1>
 
           {isAuthenticate && (
@@ -264,7 +266,7 @@ export default function LoginAuthentication({ isAuthenticate }: { isAuthenticate
           transition={{ duration: 0.1, type: 'spring', stiffness: 70 }}
           className="w-[20rem] mt-24 p-5 text-sm rounded text-center text-gray-700 dark:text-gray-400"
         >
-          <div className="w-24 h-24 rounded-full bg-blue-400 mb-3 mx-auto"></div>
+          <Icon width="150px" height="150px" />
           <h1 className="mb-4 text-2xl font-semibold text-gray-800 dark:text-gray-300">Check Your Email</h1>
           <p className="">
             We has been sent email verification to <b>{email.current?.value}</b>, please check your inbox to continue.
