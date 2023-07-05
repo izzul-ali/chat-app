@@ -10,8 +10,8 @@ export function generateAccessToken(email: string) {
 
   const expirationDate = new Date();
 
-  // NOTE: Change expiration time
-  expirationDate.setMinutes(new Date().getMinutes() + 1);
+  // expired in 5 minutes
+  expirationDate.setMinutes(new Date().getMinutes() + 5);
 
   const token = jwt.sign({ email, expirationDate }, jwtVerifySecret, { algorithm: 'HS256' });
 
