@@ -73,7 +73,11 @@ export async function getAllUsers(req: Request, res: Response) {
       };
     });
 
-    return response<AllContactMessage[]>(res, 200, '', data);
+    const sortByCreatedMessageTime = data.sort((a, b) =>
+      a.createdAt && b.createdAt ? b.createdAt?.getTime() - a.createdAt?.getTime() : 0
+    );
+
+    return response<AllContactMessage[]>(res, 200, '', sortByCreatedMessageTime);
   } catch (error) {
     if (error instanceof PrismaClientKnownRequestError) {
       return response<null>(res, 200, `error with status code: ${error.code}`, null);
