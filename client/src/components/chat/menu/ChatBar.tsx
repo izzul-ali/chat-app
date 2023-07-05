@@ -9,10 +9,10 @@ import { AllContactMessage, Message } from '~/types/message';
 import { AnimatePresence, Variants, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { getSessionGuest } from '~/hooks/useUser';
-import { produce } from 'immer';
 import { SessionUser } from '~/types/user';
 import { BsImage } from 'react-icons/bs';
-import useSwr, { mutate } from 'swr';
+import { mutateContact } from '~/hooks/useMessage';
+import useSwr from 'swr';
 import socket from '~/lib/socket';
 import axiosInstance from '~/lib/axios';
 import Image from 'next/image';
@@ -67,21 +67,7 @@ export default function ChatBar({ user, userId }: { user: SessionUser; userId: s
     });
 
     socket.on('new-message', async (msg: Message) => {
-      await mutate(
-        'all-contact',
-        produce<AllContactMessage[]>((prev) => {
-          prev.filter((u) => {
-            if (u.id === msg.senderId) {
-              u.type = msg.type;
-              u.urlFileOrImage = msg.urlFileOrImage;
-              u.currentMessage = msg.message!;
-              u.createdAt = msg.createdAt!;
-              return u;
-            }
-          });
-        }),
-        { revalidate: false }
-      );
+      await mutateContact(msg.senderId, msg);
     });
 
     return () => {
