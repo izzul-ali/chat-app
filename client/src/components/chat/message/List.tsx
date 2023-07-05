@@ -110,13 +110,11 @@ export default function MessageList({ user, userId }: { user: SessionUser; userI
                       quality={80}
                       placeholder="blur"
                       blurDataURL={v.urlFileOrImage}
-                      className="w-fit max-w-[100%] h-fit max-h-72 object-cover"
+                      className="w-fit max-w-[100%] h-fit max-h-72 object-cover rounded-md shadow-md shadow-gray-200 dark:shadow-gray-800"
                     />
                     <p
-                      className={`text-xs mr-1 ${
-                        (guest?.id || userId) === v.senderId
-                          ? 'text-right mr-1 text-gray-50'
-                          : 'text-left ml-1 text-gray-500'
+                      className={`text-xs mt-1 mr-1 text-gray-500 dark:text-gray-50 ${
+                        (guest?.id || userId) === v.senderId ? 'text-right mr-1' : 'text-left ml-1'
                       }`}
                     >
                       {parseTime(v.createdAt!)}
