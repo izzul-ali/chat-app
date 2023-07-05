@@ -16,30 +16,40 @@ export default function useMessage(userId: string, friendId: string) {
   return { data, isLoading };
 }
 
-export async function mutateMessageCache(friendId: string, newMessage: Message) {
+export async function mutateMessageCache(friendId: string, msg: Message) {
   await Promise.all([
     mutate(
       ['/contact/?id=', friendId],
       produce<Message[]>((prev) => {
-        prev.push(newMessage);
+        prev.push(msg);
       }),
       { revalidate: false }
     ),
 
-    mutate(
-      'all-contact',
-      produce<AllContactMessage[]>((prev) => {
-        prev.filter((u) => {
-          if (u.id === friendId) {
-            u.type = newMessage.type;
-            u.urlFileOrImage = newMessage.urlFileOrImage;
-            u.currentMessage = newMessage.message!;
-            u.createdAt = newMessage.createdAt!;
-            return u;
-          }
-        });
-      }),
-      { revalidate: false }
-    ),
+    mutateContact(friendId, msg),
   ]);
+}
+
+export async function mutateContact(friendId: string, msg: Message) {
+  await mutate(
+    'all-contact',
+    produce<AllContactMessage[]>((prev) => {
+      prev.filter((u) => {
+        if (u.id === friendId) {
+          u.type = msg.type;
+          u.urlFileOrImage = msg.urlFileOrImage;
+          u.currentMessage = msg.message!;
+          u.createdAt = msg.createdAt!;
+          return u;
+        }
+      });
+
+      // get contact order
+      const cIndex: number = prev.findIndex((v) => v.id === friendId);
+
+      // delete the contact, then move the deleted contact to first index of array
+      prev.splice(0, 0, prev.splice(cIndex, 1)[0]);
+    }),
+    { revalidate: false }
+  );
 }
