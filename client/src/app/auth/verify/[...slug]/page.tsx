@@ -3,6 +3,7 @@
 import { signIn } from 'next-auth/react';
 import { notFound, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import Icon from '~/components/Icon';
 
 export default function VerifyPage({ params }: { params: { slug: string[] } }) {
   const route = useRouter();
@@ -29,6 +30,9 @@ export default function VerifyPage({ params }: { params: { slug: string[] } }) {
     handleVerification();
   }, [params.slug]);
 
-  // should show error response
-  return <div>Loading</div>;
+  return (
+    <div className="w-full h-screen flex flex-col items-center justify-center">
+      <Icon width="200px" height="200px" />
+    </div>
+  );
 }
